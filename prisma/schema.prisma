@@ -9,6 +9,16 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  viewed    Boolean  @default(false)
+  User      User     @relation(fields: [userId], references: [id])
+  Sender    User     @relation("Sender", fields: [sendTo], references: [id])
+  userId    Int
+  sendTo    Int
+}
 
 model Comment {
   id        Int      @id @default(autoincrement())
@@ -21,16 +31,7 @@ model Comment {
   postId    Int
 }
 
-model Message {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  viewed    Boolean  @default(false)
-  User      User     @relation(fields: [userId], references: [id])
-  Sender    User     @relation("Sender", fields: [sendTo], references: [id])
-  userId    Int
-  sendTo    Int
-}
+
 
 model Post {
   id        Int       @id @default(autoincrement())
@@ -40,18 +41,31 @@ model Post {
   updatedAt DateTime  @updatedAt
   User      User      @relation(fields: [userId], references: [id])
   userId    Int
+  Likes     Like[] // Post has many likes
   Comment   Comment[] // post has many comments
 
   @@index([userId], name: "userId")
 }
 
 model Request {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  User       User     @relation(fields: [senderId], references: [id])
+  Sender     User     @relation("Sender", fields: [recieverId], references: [id])
+  senderId   Int
+  recieverId Int
+}
+
+model Like {
   id        Int      @id @default(autoincrement())
+  Post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  LikedBy   User     @relation("LikedBy", fields: [likedById], references: [id])
+  likedById Int
   createdAt DateTime @default(now())
-  User      User     @relation(fields: [userId], references: [id])
-  Sender    User     @relation("Sender", fields: [sendTo], references: [id])
-  userId    Int
-  sendTo    Int
+
+  @@index([postId], name: "postId")
+  @@index([likedById], name: "likedById")
 }
 
 model User {
@@ -60,7 +74,7 @@ model User {
   avatar       String?
   firstName    String
   lastName     String
-  birthday     String
+  birthday     DateTime @default(now())
   email        String
   password     String
   connected    Boolean  @default(false)
@@ -74,11 +88,34 @@ model User {
   url          String?
 
   // Define relationships
-
+  Post             Post[]
   Comment          Comment[]
   MessagesSent     Message[] @relation("Sender")
   MessagesReceived Message[]
-  Post             Post[]
   RequestsSent     Request[] @relation("Sender")
   RequestsReceived Request[]
+  LikedBy          Like[]    @relation("LikedBy")
+
+  userFriends       Friends[] @relation(name: "users")
+  friendUserFriends Friends[] @relation(name: "friend_users")
+  tags              Tag[]
+}
+
+model Friends {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(name: "users", fields: [user_id], references: [id])
+  user_id   Int
+  friend    User     @relation(name: "friend_users", fields: [friend_id], references: [id])
+  friend_id Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([user_id, friend_id])
+}
+
+model Tag {
+  id     Int    @id @default(autoincrement())
+  name   String
+  User   User?  @relation(fields: [userId], references: [id])
+  userId Int?
 }
