@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home</title>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Webestica.com">
+    <meta name="description" content="Bootstrap 5 based Social Media Network and Community Theme">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/font-awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/OverlayScrollbars-master/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/tiny-slider/dist/tiny-slider.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/glightbox-master/dist/css/glightbox.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/dropzone/dist/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/flatpickr/dist/flatpickr.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/plyr/plyr.css" />
+
+    <!-- Theme CSS -->
+    <link id="style-switch" rel="stylesheet" type="text/css" href="/assets/css/style.css">
+
+</head>
+
+<body>
+    <%- include('../partials/navbar') %>
+
+        <main>
+            <div class="container">
+                <div class="row g-4">
+                    <%- include('../partials/sidebar') %>
+
+                        <div class="col-md-8 col-lg-6 vstack gap-4">
+                            <div class="card">
+                                <!-- Card header START -->
+                                <div class="card-header border-0 pb-0">
+                                    <h5 class="card-title">🔍 Search Results for "<%= search %>"</h5>
+                                </div>
+                                <!-- Card header END -->
+                                <!-- Card body START -->
+                                <div class="card-body">
+
+
+                                    <% if (users.length == 0) { %>
+                                        <%- include('../partials/empty', { title: "No results found",
+                                        description: "Try to search for something else." }) %>
+                                        <% } %>
+
+
+                                    <% users.forEach( searchUser=> { %>
+                                        <div class="d-md-flex align-items-center mb-4">
+                                            <!-- Avatar -->
+                                            <div class="avatar me-3 mb-3 mb-md-0">
+                                                <a href="<%= searchUser.url %>"> <img class="avatar-img rounded-circle"
+                                                        src="<%= searchUser.avatar %>" alt=""> </a>
+                                            </div>
+                                            <!-- Info -->
+                                            <div class="w-100">
+                                                <div class="d-sm-flex mt-2 align-items-start">
+                                                    <h6 class="mb-0"><a href="<%= searchUser.url %>">
+                                                            <%= searchUser.firstName %>
+                                                                <%= searchUser.lastName %>
+                                                        </a></h6>
+                                                    <p class="small ms-sm-2 mb-0">
+                                                        <%= searchUser.userFunction %>
+                                                    </p>
+                                                </div>
+                                                <!-- Connections START -->
+                                                <ul class="avatar-group list-unstyled align-items-sm-center">
+                                                    <li class="small">
+                                                        <%= searchUser.description %>
+                                                    </li>
+                                                </ul>
+                                                <!-- Connections END -->
+                                            </div>
+                                            <!-- Button  align at right END -->
+                                            <div
+                                                class="ms-md-auto d-flex w-100 align-items-center justify-content-md-end">
+                                                <a href="<%= searchUser.url %>"
+                                                    data-friend-id="<%= searchUser.id %>"
+                                                    class="btn btn-primary-soft btn-sm mb-0"> Open Profile 
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <% }) %>
+
+
+
+
+                                </div>
+                                <!-- Card body END -->
+                            </div>
+
+                        </div>
+
+                </div>
+            </div>
+
+
+        </main>
+
+
+
+
+        <!-- Bootstrap JS -->
+        <script src="/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Vendors -->
+        <script src="/assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
+        <script src="/assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
+        <script src="/assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script src="/assets/vendor/glightbox-master/dist/js/glightbox.min.js"></script>
+        <script src="/assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
+        <script src="/assets/vendor/plyr/plyr.js"></script>
+        <script src="/assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
+        <script src="/assets/js/lc_emoji_picker.min.js"></script>
+        <script type="text/javascript">
+            new lc_emoji_picker('textarea, input');
+        </script>
+        <!-- Template Functions -->
+        <script src="/assets/js/functions.js"></script>
+
+</body>
+
+
+</html>

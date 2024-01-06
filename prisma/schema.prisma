@@ -9,29 +9,28 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model Message {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
   viewed    Boolean  @default(false)
-  User      User     @relation(fields: [userId], references: [id])
-  Sender    User     @relation("Sender", fields: [sendTo], references: [id])
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Sender    User     @relation("Sender", fields: [sendTo], references: [id], onDelete: Cascade)
   userId    Int
   sendTo    Int
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  content   String?
+  content   String?  @db.LongText
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
-  Post      Post     @relation(fields: [postId], references: [id])
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   userId    Int
   postId    Int
 }
-
-
 
 model Post {
   id        Int       @id @default(autoincrement())
@@ -39,7 +38,7 @@ model Post {
   image     String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  User      User      @relation(fields: [userId], references: [id])
+  User      User      @relation(fields: [userId], references: [id], onDelete: NoAction)
   userId    Int
   Likes     Like[] // Post has many likes
   Comment   Comment[] // post has many comments
@@ -50,17 +49,17 @@ model Post {
 model Request {
   id         Int      @id @default(autoincrement())
   createdAt  DateTime @default(now())
-  User       User     @relation(fields: [senderId], references: [id])
-  Sender     User     @relation("Sender", fields: [recieverId], references: [id])
+  User       User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  Sender     User     @relation("Sender", fields: [recieverId], references: [id], onDelete: Cascade)
   senderId   Int
   recieverId Int
 }
 
 model Like {
   id        Int      @id @default(autoincrement())
-  Post      Post     @relation(fields: [postId], references: [id])
+  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  LikedBy   User     @relation("LikedBy", fields: [likedById], references: [id])
+  LikedBy   User     @relation("LikedBy", fields: [likedById], references: [id], onDelete: Cascade)
   likedById Int
   createdAt DateTime @default(now())
 
@@ -68,24 +67,31 @@ model Like {
   @@index([likedById], name: "likedById")
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model User {
-  id           Int      @id @default(autoincrement())
-  bgImage      String?
-  avatar       String?
-  firstName    String
-  lastName     String
-  birthday     DateTime @default(now())
-  email        String
-  password     String
-  connected    Boolean  @default(false)
-  userFunction String?
-  description  String?
-  address      String?
-  country      String?
-  phone        String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  url          String?
+  id            Int            @id @default(autoincrement())
+  bgImage       String?
+  avatar        String?
+  firstName     String
+  lastName      String
+  birthday      DateTime       @default(now())
+  email         String         @unique
+  password      String
+  connected     Boolean        @default(false)
+  userFunction  String?
+  description   String?
+  address       String?
+  gender        Gender         @default(MALE)
+  country       String?
+  phone         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  url           String?
+  refreshTokens RefreshToken[]
 
   // Define relationships
   Post             Post[]
@@ -101,11 +107,21 @@ model User {
   tags              Tag[]
 }
 
+model RefreshToken {
+  id          String   @id @unique @default(uuid())
+  hashedToken String
+  userId      Int
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Friends {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(name: "users", fields: [user_id], references: [id])
+  user      User     @relation(name: "users", fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int
-  friend    User     @relation(name: "friend_users", fields: [friend_id], references: [id])
+  friend    User     @relation(name: "friend_users", fields: [friend_id], references: [id], onDelete: Cascade)
   friend_id Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -116,6 +132,6 @@ model Friends {
 model Tag {
   id     Int    @id @default(autoincrement())
   name   String
-  User   User?  @relation(fields: [userId], references: [id])
+  User   User?  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int?
 }

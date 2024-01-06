@@ -1,0 +1,141 @@
+<!-- Card feed item START -->
+<div class="card">
+    <!-- Card header START -->
+    <div class="card-header border-0 pb-0">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <!-- Avatar -->
+                <div class="avatar me-2">
+                    <a href="<%= post.User.url %>"> <img class="avatar-img rounded-circle" src="<%= post.User.avatar %>" alt=""> </a>
+                </div>
+                <!-- Info -->
+                <div>
+                    <div class="nav nav-divider">
+                        <h6 class="nav-item card-title mb-0"> <a href="<%= post.User.url %>">
+                                <%= post.User.firstName %>
+                                    <%= post.User.lastName %>
+                            </a></h6>
+                        <span class="nav-item small"> <i class="bi bi-clock-fill pe-1"></i>
+                            <%= moment(post.createdAt).fromNow() %>
+                        </span>
+                    </div>
+                    <p class="mb-0 small">
+                        <%= post.User.userFunction %>
+                    </p>
+                </div>
+            </div>
+            <!-- Card feed action dropdown START -->
+            <div class="dropdown">
+                <a href="#" class="text-secondary btn btn-secondary-soft-hover py-1 px-2" id="cardFeedAction"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots"></i>
+                </a>
+                <!-- Card feed action dropdown menu -->
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cardFeedAction">
+
+                    <% if (post.userId===user.id) { %>
+                        
+                        <li>
+                            <a class="dropdown-item" href="javascript:e.deletePost(<%= post.id %>)">
+                                <i class="bi bi-x-circle fa-fw pe-2"></i>Delete post</a>
+                        </li>
+                        <% } %>
+
+                </ul>
+            </div>
+            <!-- Card feed action dropdown END -->
+        </div>
+    </div>
+    <!-- Card header END -->
+    <!-- Card body START -->
+    <div class="card-body">
+        <p>
+            <%= post.content %>
+        </p>
+        <!-- Card img -->
+        <% if (post.image) { %>
+            <img class="card-img" src="<%= post.image %>" alt="">
+            <% } %>
+                <!-- Feed react START -->
+                <ul class="nav nav-stack py-3 small">
+                    <li class="nav-item">
+                        <!-- use "active" to like -->
+                        <a class="nav-link <%  post.Likes.forEach(like=> { if (like.likedById===user.id) { %> active <% } }) %> like-post-btn"
+                            href="#!" data-postid="<%= post.id %>"> <i class="bi bi-hand-thumbs-up-fill pe-1"></i>Like
+                            <span class="like-count">(<%= post.Likes.length %>)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#!"> <i class="bi bi-chat-fill pe-1"></i>Comment (<%=
+                                post.Comment.length %>)</a>
+                    </li>
+                    <!-- Card share action START -->
+
+                    <!-- Card share action END -->
+                </ul>
+                <!-- Feed react END -->
+
+                <!-- Add comment -->
+                <div class="d-flex mb-3">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xs me-2">
+                        <a href="<%= user.url %>"> <img class="avatar-img rounded-circle" src="<%= user.avatar %>" alt="">
+                        </a>
+                    </div>
+                    <!-- Comment box  -->
+                    <form class="w-100">
+                        <textarea data-autoresize class="comment-input form-control pe-4 bg-light" rows="1"
+                            placeholder="Add a comment..."></textarea>
+
+                        <button type="button" data-comment-postid="<%= post.id %>" onclick="e.submitComment(this)"
+                            class="d-none btn btn-light btn-xs mt-2 float-end">
+                            <i class=" bi bi-chat-fill"></i>&nbsp;&nbsp;Comment
+                        </button>
+
+                    </form>
+                </div>
+                <!-- Comment wrap START -->
+                <ul class="comment-wrap list-unstyled" >
+                    <!-- Comment item START -->
+                    <% post.Comment.forEach(comment=> { %>
+                        <li class="comment-item">
+                            <div class="d-flex position-relative">
+                                <!-- Avatar -->
+                                <div class="avatar avatar-xs">
+                                    <a href="<%= comment.User.url %>"><img class="avatar-img rounded-circle" src="<%= comment.User.avatar %>"
+                                            alt=""></a>
+                                </div>
+                                <div class="ms-2 w-100">
+                                    <!-- Comment by -->
+                                    <div class="bg-light rounded-start-top-0 p-3 rounded">
+                                        <div class="d-flex justify-content-between">
+                                            <h6 class="mb-1"> <a href="<%= comment.User.url %>">
+                                                    <%= comment.User.firstName %>
+                                                        <%= comment.User.lastName %>
+                                                </a></h6>
+                                            <small class="ms-2">
+                                                <%= moment(comment.createdAt).fromNow() %>
+                                            </small>
+                                        </div>
+                                        <p class="small mb-0">
+                                  
+                                            <%- comment.content.replace(/\&+/g, "&amp;").replace(/\<+/g, "&lt;").replace(/\>+/g, "&gt;").replace(/\"+/g, "&quot;").replace(/\'+/g, "&#39;").replace(/\n+/g, "<br>") %>
+
+                            
+                                        </p>
+                                    </div>
+                                    <!-- Comment react -->
+                                    <ul class="nav nav-divider py-2 small">
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <% }) %>
+                            <!-- Comment item END -->
+                </ul>
+                <!-- Comment wrap END -->
+    </div>
+    <!-- Card body END -->
+
+</div>
+<!-- Card feed item END -->

@@ -1,38 +1,54 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { PrismaClient } = require('@prisma/client')
+const prisma = new PrismaClient()
+const { faker } = require('@faker-js/faker')
+const slug = require('slug')
+const bcrypt = require('bcrypt')
 
+async function main() {
+  const amountOfUsers = 50
+  const users = []
 
-(async function main() {
-  try {
-    const user = await prisma.user.upsert({
-        where: {
-            id: 1
-        },
-        create: {
-            firstName: "Foulen",
-            lastName: "Fouleni",
-            birthday: new Date("01-01-2019"),
-            email: "test@test.com",
-            password: "123456789",
-            address: "Tunis",
-            avatar: "test.jpg",
-            bgImage: "test2.jpg",
-            connected: true,
-            country: "Tunisia",
-            description: "BIO",
-            phone: "00000000",
-            url: "user1",
-            userFunction: "JOB",
-            
-        },
-        update: {},
-    })
+  for (let i = 0; i < amountOfUsers; i++) {
+    const firstName = faker.person.firstName()
+    const lastName = faker.person.lastName()
 
-    console.log("Create 1 user", user);
-  } catch (e) {
-    console.error(e);
-    process.exit(1);
-  } finally {
-    await prisma.$disconnect();
+    const randomGender = () => {
+      // Male or Female
+      let gender = ['MALE', 'FEMALE']
+      let randomIndex = Math.floor(Math.random() * gender.length)
+      return gender[randomIndex]
+    }
+
+    const user = {
+      bgImage: faker.image.url(),
+      avatar: faker.image.avatar(),
+      firstName,
+      lastName,
+      email: faker.internet.email({
+        firstName,
+        lastName
+      }),
+      password: bcrypt.hashSync('123456', 12),
+      connected: false,
+      userFunction: faker.person.jobTitle(),
+      description: faker.lorem.sentence(),
+      address: faker.location.streetAddress(),
+      gender: randomGender(),
+      country: faker.location.country(),
+      phone: faker.phone.number(),
+      url: slug(`${firstName} ${lastName}`),
+      createdAt: faker.date.past(),
+      updatedAt: faker.date.recent()
+    }
+
+    users.push(user)
   }
-})();
+
+  const addUsers = async () => await prisma.user.createMany({ data: users })
+
+  addUsers()
+}
+
+main().finally(async () => {
+  await prisma.$disconnect()
+})

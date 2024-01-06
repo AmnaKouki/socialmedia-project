@@ -1,17 +1,14 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
+const authController = require('../controllers/authController')
 
 
-router.get("/login", function (req, res) {
-  res.render("../views/pages/login");
-});
+router.get('/login', authController.showLoginPage)
+router.post('/login', authController.login)
+router.get('/register', authController.showRegisterPage)
+router.get('/logout', authController.logout)
+router.post('/register', authController.register)
+router.post('/refreshToken', authController.refreshToken)
+router.post('/revokeRefreshTokens', authController.revokeRefreshTokens)
 
-router.get("/signup", function (req, res) {
-  res.render("../views/pages/signup");
-});
-
-router.get("/test", function (req, res) {
-    res.send({ username: 'Amna' }) // sending JSON
-  });
-
-module.exports = router;
+module.exports = router

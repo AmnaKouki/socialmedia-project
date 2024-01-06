@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Home</title>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Webestica.com">
+    <meta name="description" content="Bootstrap 5 based Social Media Network and Community Theme">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/font-awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/OverlayScrollbars-master/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/tiny-slider/dist/tiny-slider.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/glightbox-master/dist/css/glightbox.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/dropzone/dist/dropzone.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/flatpickr/dist/flatpickr.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/plyr/plyr.css" />
+
+    <!-- Theme CSS -->
+    <link id="style-switch" rel="stylesheet" type="text/css" href="/assets/css/style.css">
+
+</head>
+
+<body>
+    <%- include('../partials/navbar') %>
+
+        <main>
+            <div class="container">
+                <div class="row g-4">
+                    <%- include('../partials/sidebar') %>
+
+                        <div class="col-md-8 col-lg-6 vstack gap-4">
+                            <div class="card">
+                                <!-- Card header START -->
+                                <div class="card-header border-0 pb-0">
+                                    <h1 class="h5 card-title">Account Settings</h1>
+                                    <p class="">Change your account settings</p>
+
+                                    <!-- Alert -->
+                                    <% if (locals.success) { %>
+                                        <div class="alert alert-success mt-2" role="alert">
+                                            Your account settings have been updated successfully.
+                                        </div>
+                                        <% } %>
+                                </div>
+                                <!-- Card header END -->
+                                <!-- Card body START -->
+                                <div class="card-body">
+
+
+
+                                    <!-- Form settings START -->
+                                    <form class="row g-3" action="/users/update" method="POST">
+
+                                        <!-- First name -->
+                                        <div class="col-sm-6 col-lg-4">
+                                            <label class="form-label">First name</label>
+                                            <input name="firstName" type="text" class="form-control"
+                                                placeholder="Your firstname" value="<%= user.firstName %>" required>
+                                        </div>
+                                        <!-- Last name -->
+                                        <div class="col-sm-6 col-lg-4">
+                                            <label class="form-label">Last name</label>
+                                            <input name="lastName" type="text" class="form-control"
+                                                placeholder="Your lastname" value="<%= user.lastName %>" required>
+                                        </div>
+                                        <!-- Gender -->
+                                        <div class="col-sm-6 col-lg-4">
+                                            <label class="form-label">Gender</label>
+                                            <select class="form-select js-choice" name="gender"
+                                                data-search-enabled="false" data-
+                                                data-options='{"removeItemButton":true,"placeholder":true, "placeholderValue": "Hello"}'
+                                                required>
+                                                <option value="">Select Gender</option>
+                                                <option value="MALE" <% if (user.gender==='MALE' ) { %>
+                                                    selected
+                                                    <% } %> >Male
+                                                </option>
+                                                <option value="FEMALE" <% if (user.gender==='FEMALE' ) { %>
+                                                    selected
+                                                    <% } %> >Female
+                                                </option>
+
+                                            </select>
+                                        </div>
+
+                                        <!-- Job -->
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Job</label>
+                                            <input value="<%= user.userFunction %>" name="userFunction" type="text"
+                                                class="form-control" placeholder="Job" required>
+                                        </div>
+                                        <!-- Birthday -->
+                                        <div class="col-lg-6">
+                                            <label class="form-label">Birthday </label>
+                                            <input value="<%= user.birthday %>" name="birthday" type="text"
+                                                class="form-control flatpickr flatpickr-input " placeholder="Birthday"
+                                                readonly="readonly" required>
+                                        </div>
+
+                                        <!-- Phone number -->
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Phone number</label>
+                                            <input value="<%= user.phone %>" type="tel" class="form-control"
+                                                name="phone" placeholder="Phone number" required>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Email</label>
+                                            <input value="<%= user.email %>" name="email" type="email"
+                                                class="form-control" placeholder="Enter email" required>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Address</label>
+                                            <input value="<%= user.address %>" type="text" class="form-control"
+                                                name="address" placeholder="Address" required>
+                                        </div>
+
+                                        <div class="col-sm-6">
+                                            <label class="form-label">Country</label>
+                                            <input value="<%= user.country %>" type="text" class="form-control"
+                                                name="country" placeholder="Country" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Bio</label>
+                                            <textarea name="description" rows="4" class="form-control" placeholder="Bio"
+                                                required><%= user.description %></textarea>
+
+
+                                        </div>
+
+
+
+                                        <!-- Button  -->
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-sm btn-primary mb-0">Save
+                                                changes</button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Settings END -->
+                                </div>
+                                <!-- Card body END -->
+                            </div>
+
+
+                            <div class="card">
+                                <!-- Card header START -->
+                                <div class="card-header border-0 pb-0">
+                                    <h1 class="h5 card-title">Avatar</h1>
+                                    <p class="">Change your profile avatar</p>  
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-sm-12 col-lg-12">
+                                        <label class="form-label">Avatar</label>
+                                        <form action="/users/changeAvatar" class="dropzone" id="my-avatar"></form>
+                                        <script>
+                                            Dropzone.options.myAvatar = { // camelized version of the `id`
+                                                paramName: "file", // The name that will be used to transfer the file
+                                                maxFilesize: 2, // MB
+                                                maxFiles: 1,
+                                                acceptedFiles: ".jpeg,.jpg,.png,.gif",
+
+                                            };
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="card">
+                                <!-- Card header START -->
+                                <div class="card-header border-0 pb-0">
+                                    <h1 class="h5 card-title">Background Image</h1>
+                                    <p class="">Change your profile background image</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="col-sm-12 col-lg-12">
+                                        <label class="form-label">Background Image</label>
+                                        <form action="/users/changeBgImage" class="dropzone" id="my-bgimage"></form>
+                                        <script>
+                                            Dropzone.options.myBgimage = { // camelized version of the `id`
+                                                paramName: "file", // The name that will be used to transfer the file
+                                                maxFilesize: 2, // MB
+                                                maxFiles: 1,
+                                                acceptedFiles: ".jpeg,.jpg,.png,.gif",
+
+                                            };
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+
+
+        </main>
+
+
+
+
+        <!-- Bootstrap JS -->
+        <script src="/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Vendors -->
+        <script src="/assets/vendor/tiny-slider/dist/tiny-slider.js"></script>
+        <script src="/assets/vendor/OverlayScrollbars-master/js/OverlayScrollbars.min.js"></script>
+        <script src="/assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
+        <script src="/assets/vendor/glightbox-master/dist/js/glightbox.min.js"></script>
+        <script src="/assets/vendor/flatpickr/dist/flatpickr.min.js"></script>
+        <script src="/assets/vendor/plyr/plyr.js"></script>
+        <script src="/assets/vendor/dropzone/dist/min/dropzone.min.js"></script>
+        <script src="/assets/js/lc_emoji_picker.min.js"></script>
+        <script type="text/javascript">
+            new lc_emoji_picker('textarea');
+        </script>
+        <!-- Template Functions -->
+        <script src="/assets/js/functions.js"></script>
+
+</body>
+
+
+</html>
