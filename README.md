@@ -11,6 +11,7 @@ A social network platform inspired by LinkedIn, developed as a collaborative pro
 
 To get started with our project, follow these straightforward installation steps:
 
+
 1. Run the following commands:
 
 ```bash
