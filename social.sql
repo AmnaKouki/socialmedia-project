@@ -7,164 +7,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-CREATE TABLE IF NOT EXISTS `comment` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `content` longtext COLLATE utf8mb4_unicode_ci,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `updatedAt` datetime(3) NOT NULL,
-  `userId` int NOT NULL,
-  `postId` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Comment_userId_fkey` (`userId`),
-  KEY `Comment_postId_fkey` (`postId`),
-  CONSTRAINT `Comment_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Comment_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `comment` (`id`, `content`, `createdAt`, `updatedAt`, `userId`, `postId`) VALUES
-	(1, 'Yayyy', '2024-01-01 19:30:47.588', '2024-01-01 19:30:47.588', 2, 2),
-	(2, '😂😂😂😂', '2024-01-01 19:31:11.058', '2024-01-01 19:31:11.058', 2, 2),
-	(3, '😘😘😘😘', '2024-01-01 19:36:08.486', '2024-01-01 19:36:08.486', 2, 2),
-	(4, '😐\n', '2024-01-01 20:09:16.328', '2024-01-01 20:09:16.328', 2, 2),
-	(5, 'yrdrgfdgfdgd', '2024-01-01 20:13:31.169', '2024-01-01 20:13:31.169', 83, 2),
-	(6, 'wcxxwccswc', '2024-01-01 20:13:43.879', '2024-01-01 20:13:43.879', 2, 3);
-
-CREATE TABLE IF NOT EXISTS `friends` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `friend_id` int NOT NULL,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `updatedAt` datetime(3) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `Friends_user_id_friend_id_key` (`user_id`,`friend_id`),
-  KEY `Friends_friend_id_fkey` (`friend_id`),
-  CONSTRAINT `Friends_friend_id_fkey` FOREIGN KEY (`friend_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Friends_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `friends` (`id`, `user_id`, `friend_id`, `createdAt`, `updatedAt`) VALUES
-	(2, 3, 2, '2024-01-01 20:42:19.000', '2024-01-01 20:42:20.000'),
-	(4, 2, 83, '2024-01-01 20:13:17.872', '2024-01-01 20:13:17.872');
-
-CREATE TABLE IF NOT EXISTS `like` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `postId` int NOT NULL,
-  `likedById` int NOT NULL,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  PRIMARY KEY (`id`),
-  KEY `postId` (`postId`),
-  KEY `likedById` (`likedById`),
-  CONSTRAINT `Like_likedById_fkey` FOREIGN KEY (`likedById`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Like_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `like` (`id`, `postId`, `likedById`, `createdAt`) VALUES
-	(2, 2, 2, '2024-01-01 19:20:14.051');
-
-CREATE TABLE IF NOT EXISTS `message` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `content` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `viewed` tinyint(1) NOT NULL DEFAULT '0',
-  `userId` int NOT NULL,
-  `sendTo` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Message_userId_fkey` (`userId`),
-  KEY `Message_sendTo_fkey` (`sendTo`),
-  CONSTRAINT `Message_sendTo_fkey` FOREIGN KEY (`sendTo`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Message_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-CREATE TABLE IF NOT EXISTS `post` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `content` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `updatedAt` datetime(3) NOT NULL,
-  `userId` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `userId` (`userId`),
-  CONSTRAINT `Post_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `post` (`id`, `content`, `image`, `createdAt`, `updatedAt`, `userId`) VALUES
-	(2, 'First', NULL, '2024-01-01 19:20:12.188', '2024-01-01 19:20:12.188', 2),
-	(3, 'tzfdsfdsf', NULL, '2024-01-01 20:13:40.113', '2024-01-01 20:13:40.113', 83),
-	(4, 'test', NULL, '2024-01-01 21:22:28.237', '2024-01-01 21:22:28.237', 101);
-
-CREATE TABLE IF NOT EXISTS `refreshtoken` (
-  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `hashedToken` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `userId` int NOT NULL,
-  `revoked` tinyint(1) NOT NULL DEFAULT '0',
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `updatedAt` datetime(3) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `RefreshToken_id_key` (`id`),
-  KEY `RefreshToken_userId_fkey` (`userId`),
-  CONSTRAINT `RefreshToken_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `refreshtoken` (`id`, `hashedToken`, `userId`, `revoked`, `createdAt`, `updatedAt`) VALUES
-	('08a03358-1da6-40bb-b23b-f6046843b62f', '2b1c02af9d6bbd250919235dcd919410d4ae38b5a84d28fb43cf6d3ff70bf3f67330d29924100ccc2843eba45d76297e552f9fd9556bc8839464c20824256c50', 77, 0, '2024-01-01 20:18:23.579', '2024-01-01 20:18:23.579'),
-	('0c1ec5f6-15d7-4133-922a-2c7273c8db8f', '245164edb4bb9f55f4fa6b7340ad1dd94b083291cdb7c26f211a7e13c5284b964c0135d649c84abd41ced653f3aee91bb93b5c2c226b185006290bfc070f17e2', 1, 0, '2024-01-01 18:53:15.194', '2024-01-01 18:53:15.194'),
-	('4caf338b-ed97-4912-93f5-3c4dc41c9f65', 'b14189389a4fbdd40055c70d769fe63f472fa8fa2dcb11e6f0ecd4737c8eb1d652e0731ed2764182f814d15a99655efa7803ad694582c34f3083c7c4135dde0d', 83, 0, '2024-01-01 20:09:53.788', '2024-01-01 20:09:53.788'),
-	('5462ba77-29f8-4864-ae73-71f76cf27e02', '7fdfaa4ac8aa1e0ddfbd1b5332245d4d0b95d47a89aa30171defcfe5b5dc16427e7b0c0fbc1a33eaa2146024de2e27c39295e01bdac183694b0d3c5be398e001', 77, 0, '2024-01-01 20:44:05.728', '2024-01-01 20:44:05.728'),
-	('c5e0b998-3416-44c8-8058-146b253d5b6c', 'c3f432a491322c4827f725c10bd93e5dc7630db5e8eba749caad3018fd7e656cc6d5b189bc6d93056f9bafba69ea3dc65d3df13c2bbabe0e0368fc5c3fb7aa21', 101, 0, '2024-01-01 21:09:13.703', '2024-01-01 21:09:13.703'),
-	('da0c7926-0ada-4874-8b39-faa112ee830e', '66bd4ba1ecf9ebe2991001e5fbe0daa916cdbe3e6356a455a92db5a99dba21f4ade1cf0bb781ca872ad4c7d297a2b5339f670e1c911aec5c534707b92e09577f', 2, 0, '2024-01-01 18:54:10.972', '2024-01-01 18:54:10.972');
-
-CREATE TABLE IF NOT EXISTS `request` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `senderId` int NOT NULL,
-  `recieverId` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Request_senderId_fkey` (`senderId`),
-  KEY `Request_recieverId_fkey` (`recieverId`),
-  CONSTRAINT `Request_recieverId_fkey` FOREIGN KEY (`recieverId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `Request_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `request` (`id`, `createdAt`, `senderId`, `recieverId`) VALUES
-	(12, '2024-01-01 20:07:09.476', 2, 8),
-	(13, '2024-01-01 20:07:10.288', 2, 9),
-	(14, '2024-01-01 20:07:10.573', 2, 10),
-	(15, '2024-01-01 20:07:10.896', 2, 11),
-	(16, '2024-01-01 20:07:11.295', 2, 12),
-	(17, '2024-01-01 20:07:11.680', 2, 13),
-	(18, '2024-01-01 20:07:12.072', 2, 14),
-	(19, '2024-01-01 20:07:12.476', 2, 15),
-	(23, '2024-01-01 20:26:40.371', 77, 1),
-	(24, '2024-01-01 20:26:53.779', 77, 7),
-	(25, '2024-01-01 20:26:54.778', 77, 8),
-	(26, '2024-01-01 20:26:55.089', 77, 9),
-	(27, '2024-01-01 20:26:55.387', 77, 10),
-	(28, '2024-01-01 20:26:56.475', 77, 11),
-	(29, '2024-01-01 20:26:57.297', 77, 12),
-	(30, '2024-01-01 20:26:57.608', 77, 13),
-	(31, '2024-01-01 20:26:57.956', 77, 14),
-	(32, '2024-01-01 20:26:58.257', 77, 15),
-	(33, '2024-01-01 20:26:58.691', 77, 16),
-	(34, '2024-01-01 20:26:59.146', 77, 17),
-	(35, '2024-01-01 20:26:59.461', 77, 18),
-	(36, '2024-01-01 20:26:59.908', 77, 19),
-	(37, '2024-01-01 20:27:00.238', 77, 20),
-	(38, '2024-01-01 20:27:00.642', 77, 21),
-	(39, '2024-01-01 20:27:00.844', 77, 22),
-	(43, '2024-01-01 20:41:00.984', 77, 3),
-	(44, '2024-01-01 20:41:04.419', 77, 2),
-	(46, '2024-01-01 21:17:06.815', 101, 3);
-
-CREATE TABLE IF NOT EXISTS `tag` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `userId` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Tag_userId_fkey` (`userId`),
-  CONSTRAINT `Tag_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -292,6 +134,151 @@ INSERT INTO `user` (`id`, `bgImage`, `avatar`, `firstName`, `lastName`, `birthda
 	(100, 'https://picsum.photos/seed/oe4fZB/640/480', 'https://avatars.githubusercontent.com/u/57751778', 'Keenan', 'Pfannerstill', '2024-01-01 18:52:11.231', 'Keenan97@yahoo.com', '$2b$12$OfIF2CIkOZsTEhmi9soT/u1AY.7lo8Vhn2sjV/ZGPShIVsgN2Ak1i', 0, 'Legacy Implementation Architect', 'Vero velut confero spoliatio villa clarus.', '17160 Nico Ways', 'FEMALE', 'Anguilla', '454.496.1461 x186', '2023-11-28 14:22:00.959', '2024-01-01 02:51:52.975', 'keenan-pfannerstill'),
 	(101, '/assets/images/bg/08.jpg', '/assets/images/avatar/male.png', 'Foulen', 'Fouleni', '2024-01-17 23:00:00.000', 'test@test.test', '$2b$12$8V7P6srPj5CK/uURCizS5uFDMiOl3kpiVRX/lGs8SJ6OlygAyig02', 0, 'Test', 'Test', 'Test', 'MALE', 'Test', 'Test', '2024-01-01 21:09:13.686', '2024-01-01 21:09:13.686', 'foulen-fouleni');
 
+CREATE TABLE IF NOT EXISTS `post` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `content` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  `userId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  CONSTRAINT `Post_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `post` (`id`, `content`, `image`, `createdAt`, `updatedAt`, `userId`) VALUES
+	(2, 'First', NULL, '2024-01-01 19:20:12.188', '2024-01-01 19:20:12.188', 2),
+	(3, 'tzfdsfdsf', NULL, '2024-01-01 20:13:40.113', '2024-01-01 20:13:40.113', 83),
+	(4, 'test', NULL, '2024-01-01 21:22:28.237', '2024-01-01 21:22:28.237', 101);
+
+
+CREATE TABLE IF NOT EXISTS `like` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `postId` int NOT NULL,
+  `likedById` int NOT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  PRIMARY KEY (`id`),
+  KEY `postId` (`postId`),
+  KEY `likedById` (`likedById`),
+  CONSTRAINT `Like_likedById_fkey` FOREIGN KEY (`likedById`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Like_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `like` (`id`, `postId`, `likedById`, `createdAt`) VALUES
+	(2, 2, 2, '2024-01-01 19:20:14.051');
+
+CREATE TABLE IF NOT EXISTS `message` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `content` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `viewed` tinyint(1) NOT NULL DEFAULT '0',
+  `userId` int NOT NULL,
+  `sendTo` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Message_userId_fkey` (`userId`),
+  KEY `Message_sendTo_fkey` (`sendTo`),
+  CONSTRAINT `Message_sendTo_fkey` FOREIGN KEY (`sendTo`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Message_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+CREATE TABLE IF NOT EXISTS `comment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `content` longtext COLLATE utf8mb4_unicode_ci,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  `userId` int NOT NULL,
+  `postId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Comment_userId_fkey` (`userId`),
+  KEY `Comment_postId_fkey` (`postId`),
+  CONSTRAINT `Comment_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Comment_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `comment` (`id`, `content`, `createdAt`, `updatedAt`, `userId`, `postId`) VALUES
+	(1, 'Yayyy', '2024-01-01 19:30:47.588', '2024-01-01 19:30:47.588', 2, 2),
+	(2, '😂😂😂😂', '2024-01-01 19:31:11.058', '2024-01-01 19:31:11.058', 2, 2),
+	(3, '😘😘😘😘', '2024-01-01 19:36:08.486', '2024-01-01 19:36:08.486', 2, 2),
+	(4, '😐\n', '2024-01-01 20:09:16.328', '2024-01-01 20:09:16.328', 2, 2),
+	(5, 'yrdrgfdgfdgd', '2024-01-01 20:13:31.169', '2024-01-01 20:13:31.169', 83, 2),
+	(6, 'wcxxwccswc', '2024-01-01 20:13:43.879', '2024-01-01 20:13:43.879', 2, 3);
+
+CREATE TABLE IF NOT EXISTS `refreshtoken` (
+  `id` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hashedToken` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `userId` int NOT NULL,
+  `revoked` tinyint(1) NOT NULL DEFAULT '0',
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `RefreshToken_id_key` (`id`),
+  KEY `RefreshToken_userId_fkey` (`userId`),
+  CONSTRAINT `RefreshToken_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `refreshtoken` (`id`, `hashedToken`, `userId`, `revoked`, `createdAt`, `updatedAt`) VALUES
+	('08a03358-1da6-40bb-b23b-f6046843b62f', '2b1c02af9d6bbd250919235dcd919410d4ae38b5a84d28fb43cf6d3ff70bf3f67330d29924100ccc2843eba45d76297e552f9fd9556bc8839464c20824256c50', 77, 0, '2024-01-01 20:18:23.579', '2024-01-01 20:18:23.579'),
+	('0c1ec5f6-15d7-4133-922a-2c7273c8db8f', '245164edb4bb9f55f4fa6b7340ad1dd94b083291cdb7c26f211a7e13c5284b964c0135d649c84abd41ced653f3aee91bb93b5c2c226b185006290bfc070f17e2', 1, 0, '2024-01-01 18:53:15.194', '2024-01-01 18:53:15.194'),
+	('4caf338b-ed97-4912-93f5-3c4dc41c9f65', 'b14189389a4fbdd40055c70d769fe63f472fa8fa2dcb11e6f0ecd4737c8eb1d652e0731ed2764182f814d15a99655efa7803ad694582c34f3083c7c4135dde0d', 83, 0, '2024-01-01 20:09:53.788', '2024-01-01 20:09:53.788'),
+	('5462ba77-29f8-4864-ae73-71f76cf27e02', '7fdfaa4ac8aa1e0ddfbd1b5332245d4d0b95d47a89aa30171defcfe5b5dc16427e7b0c0fbc1a33eaa2146024de2e27c39295e01bdac183694b0d3c5be398e001', 77, 0, '2024-01-01 20:44:05.728', '2024-01-01 20:44:05.728'),
+	('c5e0b998-3416-44c8-8058-146b253d5b6c', 'c3f432a491322c4827f725c10bd93e5dc7630db5e8eba749caad3018fd7e656cc6d5b189bc6d93056f9bafba69ea3dc65d3df13c2bbabe0e0368fc5c3fb7aa21', 101, 0, '2024-01-01 21:09:13.703', '2024-01-01 21:09:13.703'),
+	('da0c7926-0ada-4874-8b39-faa112ee830e', '66bd4ba1ecf9ebe2991001e5fbe0daa916cdbe3e6356a455a92db5a99dba21f4ade1cf0bb781ca872ad4c7d297a2b5339f670e1c911aec5c534707b92e09577f', 2, 0, '2024-01-01 18:54:10.972', '2024-01-01 18:54:10.972');
+
+CREATE TABLE IF NOT EXISTS `request` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `senderId` int NOT NULL,
+  `recieverId` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Request_senderId_fkey` (`senderId`),
+  KEY `Request_recieverId_fkey` (`recieverId`),
+  CONSTRAINT `Request_recieverId_fkey` FOREIGN KEY (`recieverId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Request_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `request` (`id`, `createdAt`, `senderId`, `recieverId`) VALUES
+	(12, '2024-01-01 20:07:09.476', 2, 8),
+	(13, '2024-01-01 20:07:10.288', 2, 9),
+	(14, '2024-01-01 20:07:10.573', 2, 10),
+	(15, '2024-01-01 20:07:10.896', 2, 11),
+	(16, '2024-01-01 20:07:11.295', 2, 12),
+	(17, '2024-01-01 20:07:11.680', 2, 13),
+	(18, '2024-01-01 20:07:12.072', 2, 14),
+	(19, '2024-01-01 20:07:12.476', 2, 15),
+	(23, '2024-01-01 20:26:40.371', 77, 1),
+	(24, '2024-01-01 20:26:53.779', 77, 7),
+	(25, '2024-01-01 20:26:54.778', 77, 8),
+	(26, '2024-01-01 20:26:55.089', 77, 9),
+	(27, '2024-01-01 20:26:55.387', 77, 10),
+	(28, '2024-01-01 20:26:56.475', 77, 11),
+	(29, '2024-01-01 20:26:57.297', 77, 12),
+	(30, '2024-01-01 20:26:57.608', 77, 13),
+	(31, '2024-01-01 20:26:57.956', 77, 14),
+	(32, '2024-01-01 20:26:58.257', 77, 15),
+	(33, '2024-01-01 20:26:58.691', 77, 16),
+	(34, '2024-01-01 20:26:59.146', 77, 17),
+	(35, '2024-01-01 20:26:59.461', 77, 18),
+	(36, '2024-01-01 20:26:59.908', 77, 19),
+	(37, '2024-01-01 20:27:00.238', 77, 20),
+	(38, '2024-01-01 20:27:00.642', 77, 21),
+	(39, '2024-01-01 20:27:00.844', 77, 22),
+	(43, '2024-01-01 20:41:00.984', 77, 3),
+	(44, '2024-01-01 20:41:04.419', 77, 2),
+	(46, '2024-01-01 21:17:06.815', 101, 3);
+
+CREATE TABLE IF NOT EXISTS `tag` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `userId` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Tag_userId_fkey` (`userId`),
+  CONSTRAINT `Tag_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 CREATE TABLE IF NOT EXISTS `_prisma_migrations` (
   `id` varchar(36) COLLATE utf8mb4_unicode_ci NOT NULL,
   `checksum` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -312,3 +299,20 @@ INSERT INTO `_prisma_migrations` (`id`, `checksum`, `finished_at`, `migration_na
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
+
+CREATE TABLE IF NOT EXISTS `friends` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `friend_id` int NOT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `updatedAt` datetime(3) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `Friends_user_id_friend_id_key` (`user_id`,`friend_id`),
+  KEY `Friends_friend_id_fkey` (`friend_id`),
+  CONSTRAINT `Friends_friend_id_fkey` FOREIGN KEY (`friend_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `Friends_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO `friends` (`id`, `user_id`, `friend_id`, `createdAt`, `updatedAt`) VALUES
+	(2, 3, 2, '2024-01-01 20:42:19.000', '2024-01-01 20:42:20.000'),
+	(4, 2, 83, '2024-01-01 20:13:17.872', '2024-01-01 20:13:17.872');
